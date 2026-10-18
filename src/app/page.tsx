@@ -94,8 +94,7 @@ export default async function Dashboard() {
     (memRes.data ?? []) as unknown as Membership[]
   ).filter((m) => m.organizations);
 
-  // The superadmin has no organization of their own: go straight to the approval page
-     // The superadmin account lives on the separate KlokIt admin site
+  // The superadmin has no organization of their own: 
    if (paRes.data && memberships.length === 0) {
      return (
        <main className="page max-w-md">

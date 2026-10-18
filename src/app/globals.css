@@ -569,3 +569,39 @@
 .made-by { font-size: 0.75rem; color: var(--muted); text-align: center; letter-spacing: 0.04em; }
 .made-by strong { color: var(--text); }
 .nav-overlay { flex-direction: column; gap: 0.25rem; }
+
+@layer components {
+  /* ---------- Logo: light and dark versions swap with the theme ---------- */
+  .brand-logo { position: relative; display: inline-block; flex-shrink: 0; }
+  .brand-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .logo-dark { display: none; }
+  [data-theme="dark"] .logo-light { display: none; }
+  [data-theme="dark"] .logo-dark { display: inline-block; }
+  .brand-accent { color: #19b985; }
+
+  /* ---------- Back button (sub pages only) ---------- */
+  .back-bar { position: fixed; top: 0.9rem; left: 0.9rem; z-index: 54; }
+  @media (min-width: 900px) {
+    .back-bar { left: 17.5rem; }
+  }
+  .neu-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 4px 4px 8px var(--sh-dark), -4px -4px 8px var(--sh-light);
+    transition: box-shadow 0.15s ease;
+  }
+  .neu-back:hover {
+    box-shadow: 2px 2px 4px var(--sh-dark), -2px -2px 4px var(--sh-light);
+  }
+  .neu-back:active {
+    box-shadow: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
+  }
+}

@@ -4,6 +4,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import "./globals.css";
 import NavigationFeedback from "@/components/navigation-feedback";
 import AppNav from "@/components/app-nav";
+import BackBar from "@/components/back-bar";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({

@@ -278,8 +278,7 @@ export default function AppNav() {
   );
 
   const account = (
-    <div className="nav-account neu-inset">
-      <span className="nav-avatar">{initials}</span>
+    <div className="nav-account neu-inset">   
       <span className="nav-email font-semibold" title={email}>
         {display}
       </span>

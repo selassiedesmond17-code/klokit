@@ -1,25 +1,41 @@
-export default function Brand({ size = "md" }: { size?: "md" | "lg" }) {
-  const big = size === "lg";
+import Image from "next/image";
+
+// showName={false} gives the logo on its own
+export default function Brand({
+  size = "md",
+  showName = true,
+}: {
+  size?: "md" | "lg";
+  showName?: boolean;
+}) {
+  const px = size === "lg" ? 64 : 38;
   return (
     <div className="brand">
-      {/* Later: replace this mark with <img src="/logo.svg" alt="" /> */}
-      <span className={`brand-mark${big ? " brand-mark-lg" : ""}`}>
-        <svg
-          width={big ? 28 : 20}
-          height={big ? 28 : 20}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 7v5l3 2" />
-        </svg>
+      <span className="brand-logo" style={{ width: px, height: px }}>
+        <Image
+          src="/logo-light.png"
+          alt="KlokIt"
+          width={px}
+          height={px}
+          className="logo-light"
+          unoptimized
+          priority
+        />
+        <Image
+          src="/logo-dark.png"
+          alt=""
+          width={px}
+          height={px}
+          className="logo-dark"
+          unoptimized
+          priority
+        />
       </span>
-      <span className={`brand-name${big ? " brand-name-lg" : ""}`}>KlokIt</span>
+      {showName && (
+        <span className={`brand-name${size === "lg" ? " brand-name-lg" : ""}`}>
+          Klok<span className="brand-accent">It</span>
+        </span>
+      )}
     </div>
   );
 }

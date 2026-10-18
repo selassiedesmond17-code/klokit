@@ -1,12 +1,12 @@
 import { DotsLoader } from "@/components/loaders";
-import MadeBy from "@/components/made-by";
+
 
 export default function Loading() {
   return (
     <main className="page max-w-2xl" aria-busy="true">
       <div className="flex flex-col items-center py-4">
         <DotsLoader />
-        <MadeBy />
+        <p className="made-by"><strong>KlokIt</strong></p>
       </div>
       <div className="skeleton mt-2 h-8 w-2/3" />
       <div className="skeleton mt-3 h-4 w-1/2" />

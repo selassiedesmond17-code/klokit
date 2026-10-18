@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { DotsLoader } from "@/components/loaders";
-import MadeBy from "@/components/made-by";
+
 
 // The loader stays visible at least this long, so it never just flickers.
 // Lower the number for a snappier feel, raise it for a longer animation.
@@ -65,7 +65,7 @@ export default function NavigationFeedback() {
       <div className="nav-bar" aria-hidden="true" />
       <div className="nav-overlay" role="status" aria-live="polite">
         <DotsLoader />
-        <MadeBy />
+        <p className="made-by"><strong>KlokIt</strong></p>
         <span className="sr-only">Loading…</span>
       </div>
     </>
