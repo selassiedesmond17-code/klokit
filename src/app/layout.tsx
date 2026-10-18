@@ -34,7 +34,8 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <ThemeToggle />
         <NavigationFeedback />
-        <AppNav />
+           <AppNav />
+           <BackBar />
         {children}
       </body>
     </html>

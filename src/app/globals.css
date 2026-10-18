@@ -605,3 +605,29 @@
     box-shadow: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
   }
 }
+@layer components {
+  .back-bar { position: fixed; top: 0.9rem; left: 0.9rem; z-index: 54; }
+  @media (min-width: 900px) {
+    .back-bar { left: 17.5rem; }
+  }
+  .neu-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 4px 4px 8px var(--sh-dark), -4px -4px 8px var(--sh-light);
+    transition: box-shadow 0.15s ease;
+  }
+  .neu-back:hover {
+    box-shadow: 2px 2px 4px var(--sh-dark), -2px -2px 4px var(--sh-light);
+  }
+  .neu-back:active {
+    box-shadow: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
+  }
+}
