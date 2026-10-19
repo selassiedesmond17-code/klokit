@@ -1,6 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { parseFilters, UUID_RE, type ReportRow } from "@/lib/report-filters";
+import { UUID_RE } from "@/lib/report-filters";
+import { fieldLabel } from "@/lib/org-types";
+import {
+  parseMatrixFilters,
+  shownFields,
+  type MatrixRow,
+} from "@/lib/report-matrix";
 
 // Wraps a value for CSV, and stops spreadsheet programs from running
 // anything that looks like a formula
@@ -18,32 +24,59 @@ export async function GET(
   if (!UUID_RE.test(orgId)) {
     return new NextResponse("Not found", { status: 404 });
   }
-
   const url = new URL(request.url);
-  const filters = parseFilters((k) => url.searchParams.get(k));
+  const filters = parseMatrixFilters((k) => url.searchParams.get(k));
 
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("attendance_report", {
-    p_org: orgId,
-    ...filters,
-    p_limit: 5000,
-  });
-  if (error) return new NextResponse(error.message, { status: 400 });
+  const [orgRes, res] = await Promise.all([
+    supabase
+      .from("organizations")
+      .select("name, org_type, profile_fields")
+      .eq("id", orgId)
+      .single(),
+    supabase.rpc("attendance_matrix", {
+      p_org: orgId,
+      ...filters,
+      p_limit: 5000,
+    }),
+  ]);
+  if (!orgRes.data) return new NextResponse("Not found", { status: 404 });
+  if (res.error) return new NextResponse(res.error.message, { status: 400 });
 
-  const header = ["Date", "Time", "Room", "Session", "Person", "Action", "Status", "Location check", "Admin approved"];
+  const org = orgRes.data;
+  const rows = (res.data ?? []) as MatrixRow[];
+  const shown = shownFields(org.profile_fields, org.org_type);
+
+  const header = [
+    "Date",
+    "Session",
+    "Room",
+    "Name",
+    "Email",
+    ...shown.map((k) => fieldLabel(org.org_type, k, "user")),
+    "Clock in",
+    "Clock in status",
+    "Clock in note",
+    "Clock out",
+    "Clock out status",
+    "Clock out note",
+  ];
   const lines = [header.map(csvCell).join(",")];
-  for (const r of (data ?? []) as ReportRow[]) {
+  for (const r of rows) {
     lines.push(
       [
-        r.local_date,
-        r.local_time,
-        r.room_name,
+        r.session_date,
         r.session_title,
-        r.user_email,
-        r.action === "clock_in" ? "Clock in" : "Clock out",
-        r.status,
-        r.gps_result,
-        r.admin_approved ? "yes" : "",
+        r.room_name,
+        r.full_name,
+        r.email,
+        ...shown.map((k) => r[k]),
+        r.in_time,
+        r.in_status ?? "absent",
+        r.in_note,
+        r.out_time,
+        r.out_status ?? (r.in_status ? "missing" : "absent"),
+        r.out_note,
       ]
         .map(csvCell)
         .join(",")
@@ -54,7 +87,7 @@ export async function GET(
   return new NextResponse("\uFEFF" + lines.join("\r\n"), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="attendance-${stamp}.csv"`,
+      "Content-Disposition": `attachment; filename="klokit-attendance-${stamp}.csv"`,
     },
   });
 }

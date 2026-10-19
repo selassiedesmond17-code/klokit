@@ -36,7 +36,7 @@ export default function NavigationFeedback() {
       const url = new URL(href, window.location.href);
       if (url.origin !== window.location.origin) return;
       if (url.pathname === window.location.pathname) return;
-      if (url.pathname.endsWith("/export")) return; // CSV download
+      if (/\/export(\/|$)/.test(url.pathname)) return; // CSV download
       start();
     }
 
