@@ -1,4 +1,4 @@
-import { sendMail, emailHtml, escapeHtml } from "@/lib/mail";
+   import { sendMail, emailHtml, escapeHtml, adminSiteUrl } from "@/lib/mail";
 
 const MAX_RECIPIENTS = 50;
 
@@ -79,9 +79,9 @@ export async function notifyNewRegistration(p: {
             `<strong>${escapeHtml(p.orgName)}</strong> (${escapeHtml(p.typeLabel)}) was registered by ${escapeHtml(p.by)} (${escapeHtml(p.byEmail)}).`,
             "Review it, choose which details people must fill in, and approve or reject it.",
           ],
-          button: { label: "Review now", href: process.env.NEXT_PUBLIC_ADMIN_URL ?? p.site },
+          button: { label: "Review now", href: adminSiteUrl() ?? p.site },
         }),
-        text: `${p.orgName} (${p.typeLabel}) is waiting for approval: ${process.env.NEXT_PUBLIC_ADMIN_URL ?? p.site}`,
+        text: `${p.orgName} (${p.typeLabel}) is waiting for approval: ${adminSiteUrl() ?? p.site}`,
       })
     )
   );

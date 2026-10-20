@@ -3,7 +3,17 @@ import { headers } from "next/headers";
 
 // The address of the live site, used for links inside emails
 export async function siteUrl(): Promise<string> {
-  const fixed = process.env.SITE_URL;
+     const raw = process.env.SITE_URL?.trim();
+     const isLocal = (u: string) => /localhost|127\.0\.0\.1/.test(u);
+     // On the live site a localhost address is always a mistake: use the real address
+     if (
+       process.env.VERCEL &&
+       (!raw || isLocal(raw)) &&
+       process.env.VERCEL_PROJECT_PRODUCTION_URL
+     ) {
+       return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+     }
+     const fixed = raw;
   if (fixed) return fixed.replace(/\/+$/, "");
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
@@ -73,3 +83,13 @@ export async function sendMail(o: {
     return false;
   }
 }
+
+   // The public address of the admin site, for links in emails sent to you
+   export function adminSiteUrl(): string | null {
+     const raw = (process.env.ADMIN_SITE_URL ?? process.env.NEXT_PUBLIC_ADMIN_URL ?? "")
+       .trim()
+       .replace(/\/+$/, "");
+     if (!raw) return null;
+     if (process.env.VERCEL && /localhost|127\.0\.0\.1/.test(raw)) return null;
+     return raw;
+   }
