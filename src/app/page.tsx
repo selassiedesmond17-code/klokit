@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import ProfileNotice from "@/components/profile-notice";
+import InstallApp from "@/components/install-app";
 import { deptRoleText } from "@/lib/dept";
 
 type Membership = {
@@ -180,6 +181,7 @@ export default async function Dashboard() {
       </h1>
       <Suspense fallback={null}>
         <ProfileNotice />
+           <InstallApp />
       </Suspense>
 
       {memberships.length === 0 && (

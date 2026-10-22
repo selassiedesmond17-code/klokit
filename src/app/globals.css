@@ -631,3 +631,8 @@
     box-shadow: inset 2px 2px 4px var(--sh-dark), inset -2px -2px 4px var(--sh-light);
   }
 }
+
+@media (display-mode: standalone) {
+.install-card { display: none; }
+}
+[data-install-hidden="1"] .install-card { display: none; }

@@ -47,7 +47,7 @@ export default function AppNav() {
   const lastLoad = useRef(0);
   const forced = useRef<string | null>(null);
 
-  const hidden = pathname.startsWith("/login");
+  const hidden = pathname.startsWith("/login") || pathname.startsWith("/offline");
   const urlOrg = pathname.match(/^\/org\/([0-9a-fA-F-]{36})/)?.[1] ?? null;
 
   const load = useCallback(async () => {
