@@ -155,7 +155,12 @@ export default async function SessionsPage({
         {upcoming.length === 0 && (
           <li className="neu-inset muted">No upcoming sessions.</li>
         )}
-        {upcoming.map((s) => card(s, "upcoming"))}
+        {upcoming.slice(0, 15).map((s) => card(s, "upcoming"))}
+        {upcoming.length > 15 && (
+          <li className="muted text-sm">
+            …and {upcoming.length - 15} more later
+          </li>
+        )}
       </ul>
 
       {manageableRooms.length > 0 && (

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import QRCode from "qrcode";
+import { siteUrl } from "@/lib/mail";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/badges";
 import SubmitButton from "@/components/submit-button";
@@ -59,13 +60,22 @@ export default async function SessionDetailPage({
   const { data: session } = await supabase
     .from("attendance_sessions")
     .select(
-      "id, title, token, starts_at, expires_at, allow_clock_in, allow_clock_out, require_gps, gps_notice"
+      "id, title, token, starts_at, expires_at, allow_clock_in, allow_clock_out, require_gps, gps_notice, series_id"
     )
     .eq("id", sessionId)
     .eq("room_id", roomId)
     .eq("organization_id", orgId)
     .single();
-  if (!session) notFound();
+     if (!session) notFound();
+
+     let seriesCount = 0;
+     if (session.series_id) {
+       const { count } = await supabase
+         .from("attendance_sessions")
+         .select("id", { count: "exact", head: true })
+         .eq("series_id", session.series_id);
+       seriesCount = count ?? 0;
+     }
 
   const { data: org } = await supabase
     .from("organizations")
@@ -97,7 +107,7 @@ export default async function SessionDetailPage({
   const h = await headers();
   const host = h.get("host");
   const proto = h.get("x-forwarded-proto") ?? "http";
-  const link = `${proto}://${host}/s/${session.token}`;
+     const link = `${await siteUrl()}/s/${session.token}`;
   const qrSvg = await QRCode.toString(link, {
     type: "svg",
     margin: 1,
@@ -251,7 +261,14 @@ export default async function SessionDetailPage({
       <p className="muted mt-1 text-sm">
         {fmt(session.starts_at, tz)} → {fmt(session.expires_at, tz)} ({tz})
       </p>
-   {error && <p className="alert alert-error mt-4">{error}</p>}
+      {error && <p className="alert alert-error mt-4">{error}</p>}
+         {seriesCount > 1 && (
+           <p className="alert alert-info mt-4">
+             This session is one of {seriesCount} in a repeating series. They
+             all share this QR code, which always opens whichever session is
+             live that day.
+           </p>
+         )}
 
          <div className="mt-4 flex flex-wrap items-center gap-3">
            <span className={`neu-badge ${session.require_gps ? "badge-ok" : ""}`}>
@@ -288,7 +305,15 @@ export default async function SessionDetailPage({
             className="neu-qr"
             dangerouslySetInnerHTML={{ __html: qrSvg }}
           />
-          <p className="muted mt-2 max-w-60 break-all text-xs">{link}</p>
+             <p className="muted mt-2 max-w-60 break-all text-xs">{link}</p>
+             <div className="mt-3 flex flex-wrap gap-2">
+               <a href={`${path}/qr?format=png`} download className="neu-btn neu-btn-sm">
+                 Download PNG
+               </a>
+               <a href={`${path}/qr?format=pdf`} download className="neu-btn neu-btn-sm neu-btn-primary">
+                 Download PDF
+               </a>
+             </div>
         </div>
         <div className="flex flex-col gap-3">
           <form action={toggle}>

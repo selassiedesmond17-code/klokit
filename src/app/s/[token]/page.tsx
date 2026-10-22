@@ -28,7 +28,7 @@ export default async function ClockPage({
   } = await supabase.auth.getUser();
 
   const { data: session } = await supabase
-    .from("attendance_sessions")
+    .rpc("session_for_token", { p_token: token })
     .select(
       "id, title, starts_at, expires_at, allow_clock_in, allow_clock_out, room_id, organization_id, require_gps, gps_notice"
     )
