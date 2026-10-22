@@ -17,9 +17,9 @@ export const ORG_TYPES = [
   { value: "retail_hospitality", label: "Retail and Hospitality" },
   { value: "healthcare", label: "Healthcare" },
   { value: "manufacturing_construction", label: "Manufacturing and Construction" },
-  { value: "small_business", label: "Small Businesses" },
-  { value: "school", label: "Schools" },
-  { value: "university", label: "Universities" },
+  { value: "small_business", label: "Small Business" },
+  { value: "school", label: "School" },
+  { value: "university", label: "University" },
 ] as const;
 
 export function typeLabel(type: string) {
